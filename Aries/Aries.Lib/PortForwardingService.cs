@@ -12,6 +12,7 @@ namespace Aries.Lib
         public WarpMessage WarpMessage;
 
         private Dictionary<int, PortForwardingWorker> workers;
+        private PortForwardingProxyWorker loginWorker;
 
         public PortForwardingService()
         {
@@ -25,7 +26,10 @@ namespace Aries.Lib
             await Task.Run(() =>
             {
                 SendMessage("正在开启端口映射...");
-                int count = 0;
+                if (loginWorker != null)
+                {
+                    loginWorker.Start();
+                }
                 foreach (PortForwardingWorker worker in workers.Values)
                 {
                     if (!worker.IsRunning)
@@ -34,15 +38,6 @@ namespace Aries.Lib
                     }
                 }
                 callback(true);
-                //if (count > 0)
-                //{
-                //    Stop();
-                //    callback(false);
-                //}
-                //else
-                //{
-                //    callback(true);
-                //}
             });
 
         }
@@ -62,6 +57,12 @@ namespace Aries.Lib
                 }
             }
             workers.Clear();
+
+            if (loginWorker != null)
+            {
+                loginWorker.Stop();
+                loginWorker = null;
+            }
             SendMessage("端口映射已停止");
         }
 
@@ -80,6 +81,27 @@ namespace Aries.Lib
             }
         }
 
+        public void SetLoginForwarding(int localPort, string host, int port)
+        {
+            if (loginWorker != null)
+            {
+                loginWorker.Stop();
+            }
+
+            loginWorker = new PortForwardingProxyWorker(localPort, host, port);
+            loginWorker.WarpMessage += ForwardLoginWorkerMessage;
+        }
+
+        public bool sendPacket(byte[] packet)
+        {
+            if (loginWorker == null)
+            {
+                SendErrorMessage("登录代理尚未初始化，请先点击启动");
+                return false;
+            }
+
+            return loginWorker.TrySendPacket(packet);
+        }
 
         #endregion
 
@@ -101,6 +123,16 @@ namespace Aries.Lib
             WarpMessage?.Invoke(MessageType.Error, Msg);
         }
 
+        private void ForwardLoginWorkerMessage(MessageType type, string message)
+        {
+            if (type == MessageType.Tips)
+            {
+                SendMessage(message);
+                return;
+            }
+
+            SendErrorMessage(message);
+        }
 
     }
 }

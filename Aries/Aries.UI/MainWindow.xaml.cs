@@ -17,6 +17,7 @@ namespace Aries
         BindingList<ServerConfig> serverConfigs;
 
         public MapleStoryInspector inspector;
+        public UserConfig user;
 
         public PortForwardingService portService;
 
@@ -44,6 +45,14 @@ namespace Aries
             cbServerConfig.DataContext = serverConfigs;
 
             cbServerConfig.SelectedValue = ServerConfigService.LastId;
+
+            user = ServerConfigService.LoadUser();
+            if (user != null && !string.IsNullOrEmpty(user.Username))
+            {
+                tbUsername.Text = user.Username;
+                pbPassword.Password = user.Password ?? string.Empty;
+                checkRememberUser.IsChecked = true;
+            }
         }
 
         private void InitMapleInspector()
@@ -89,12 +98,14 @@ namespace Aries
                 if (success)
                 {
                     ServerConfig cfg = serverConfigs[Convert.ToInt32(cbServerConfig.SelectedIndex)];
+                    portService.Stop();
                     if (cfg.Host == "localhost" || cfg.Host == "127.0.0.1")
                     {
                         LauchMaple(success);
                         return;
                     }
-                    portService.AddForwarding(8484, cfg.Host, cfg.LoginPort);
+                    // 保持原版客户端固定连 221.231.130.70:8484，只把 8484 映射替换成可注入登录包的代理会话。
+                    portService.SetLoginForwarding(8484, cfg.Host, cfg.LoginPort);
                     portService.AddForwarding(8600, cfg.Host, cfg.ShopPort);
                     portService.AddForwarding(8700, cfg.Host, cfg.AhPort);
                     portService.AddForwarding(8283, cfg.Host, cfg.ChatPort);
@@ -166,6 +177,34 @@ namespace Aries
                 NetworkAdapterInstaller.CheckAndInstallAdapter(LaunchForwarding);
             }
 
+        }
+
+        private void btnLogin_Click(object sender, RoutedEventArgs e)
+        {
+            string username = tbUsername.Text == null ? string.Empty : tbUsername.Text.Trim();
+            string password = pbPassword.Password ?? string.Empty;
+            if (string.IsNullOrEmpty(username) || username.Length < 6)
+            {
+                tbLogs.Text += "[错误]账号长度需大于等于6\n";
+                return;
+            }
+
+            if (string.IsNullOrEmpty(password) || password.Length < 6)
+            {
+                tbLogs.Text += "[错误]密码长度需大于等于6\n";
+                return;
+            }
+
+            if (checkRememberUser.IsChecked == true)
+            {
+                ServerConfigService.SaveUser(username, password);
+            }
+            else
+            {
+                ServerConfigService.SaveUser(string.Empty, string.Empty);
+            }
+
+            portService.sendPacket(LoginPacketBuilder.Build(username, password, message => WarpMessage(MessageType.Tips, message)));
         }
 
         private void radio_Adapter_Checked(object sender, RoutedEventArgs e)
@@ -306,6 +345,12 @@ namespace Aries
         {
             ServerConfigService.QuickPass = (bool)checkQuickPass.IsChecked;
             inspector.QuickPass = ServerConfigService.QuickPass;
+        }
+
+        private void checkRememberUser_Unchecked(object sender, RoutedEventArgs e)
+        {
+            checkRememberUser.IsChecked = false;
+            ServerConfigService.SaveUser(string.Empty, string.Empty);
         }
     }
 }

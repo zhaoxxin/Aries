@@ -106,6 +106,20 @@
 
 
             </StackPanel>
+            <StackPanel Style="{StaticResource RowStyle}" HorizontalAlignment="Center">
+                <StackPanel Margin="20,0,20,0">
+                    <StackPanel Style="{StaticResource RowStyle}">
+                        <Label Style="{StaticResource SubLabelStyle2}" Content="输入账号"/>
+                        <TextBox x:Name="tbUsername" TextWrapping="Wrap" Margin="5" Height="30" Width="200"/>
+                    </StackPanel>
+                    <StackPanel Style="{StaticResource RowStyle}">
+                        <Label Style="{StaticResource SubLabelStyle2}" Content="输入密码"/>
+                        <PasswordBox x:Name="pbPassword" Margin="5" Height="30" Width="200"/>
+                    </StackPanel>
+                    <CheckBox x:Name="checkRememberUser" Content="记住账号和密码" Margin="75,0,0,0" Unchecked="checkRememberUser_Unchecked"/>
+                </StackPanel>
+                <Button x:Name="btnLogin" Content="登陆" Style="{StaticResource ButtonLgStyle}" Height="57" Width="75" Margin="0,0,40,0" Click="btnLogin_Click"/>
+            </StackPanel>
             <TextBox x:Name="tbLogs" TextWrapping="Wrap" Margin="5" Text="{Binding DataContext, RelativeSource={RelativeSource Self}}" Height="100"/>
         </StackPanel>
     </Grid>
