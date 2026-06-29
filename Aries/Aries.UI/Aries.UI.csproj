@@ -11,7 +11,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <LangVersion>latest</LangVersion>
-    <ApplicationIcon>BlueSnail.ico</ApplicationIcon>
+    <ApplicationIcon>bluesnail.ico</ApplicationIcon>
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
 
@@ -69,8 +69,9 @@
     </EmbeddedResource>
   </ItemGroup>
 
-  <!-- 其他文件 -->
+  <!-- 资源文件 -->
   <ItemGroup>
+    <Resource Include="bluesnail.ico" />
     <None Include="App.config" />
   </ItemGroup>
 

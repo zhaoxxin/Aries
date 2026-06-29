@@ -5,7 +5,7 @@
                       xmlns:Model="clr-namespace:Aries.Model;assembly=Aries.Model" x:Class="Aries.EditServerConfigWindow"
                       Title="编辑服务器配置信息"
                       Height="280"
-                      Width="480" ResizeMode="NoResize" Icon="BlueSnail.ico" WindowStartupLocation="CenterOwner">
+                      Width="480" ResizeMode="NoResize" Icon="bluesnail.ico" WindowStartupLocation="CenterOwner">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="209*"/>
