@@ -352,5 +352,17 @@ namespace Aries
             checkRememberUser.IsChecked = false;
             ServerConfigService.SaveUser(string.Empty, string.Empty);
         }
+
+        /// <summary>勾选"特殊模式(支持CMS143)" → 展开登录凭据面板</summary>
+        private void checkSpecialMode_Checked(object sender, RoutedEventArgs e)
+        {
+            SpecialLoginPanel.Visibility = Visibility.Visible;
+        }
+
+        /// <summary>取消"特殊模式" → 隐藏登录凭据面板</summary>
+        private void checkSpecialMode_Unchecked(object sender, RoutedEventArgs e)
+        {
+            SpecialLoginPanel.Visibility = Visibility.Collapsed;
+        }
     }
 }

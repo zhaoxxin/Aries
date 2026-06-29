@@ -16,6 +16,12 @@ namespace Aries
     /// </summary>
     public partial class App : Application
     {
+        /// <summary>静态构造 — 在 InitializeComponent 前注册 AssemblyResolve，避免 BAML 资源加载时找不到内嵌 DLL</summary>
+        static App()
+        {
+            AppDomain.CurrentDomain.AssemblyResolve += OnResolveAssembly;
+        }
+
         private static Assembly OnResolveAssembly(object sender, ResolveEventArgs args)
         {
             Assembly executingAssembly = Assembly.GetExecutingAssembly();
@@ -50,7 +56,6 @@ namespace Aries
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            AppDomain.CurrentDomain.AssemblyResolve += OnResolveAssembly;
         }
     }
 }

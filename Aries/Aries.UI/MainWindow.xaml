@@ -8,6 +8,7 @@
                       Width="480" Icon="BlueSnail.ico" ResizeMode="NoResize" Closed="MetroWindow_Closed" SizeToContent="Height" Closing="MetroWindow_Closing" WindowStartupLocation="CenterScreen">
     <Controls:MetroWindow.Resources>
         <localConverters:NullToFalseConverter x:Key="NullToFalseConverter"/>
+        <localConverters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
     </Controls:MetroWindow.Resources>
 
     <Controls:MetroWindow.RightWindowCommands>
@@ -102,11 +103,19 @@
                             </StackPanel>
                         </CheckBox.ToolTip>
                     </CheckBox>
+                    <CheckBox x:Name="checkSpecialMode" Content="特殊模式(支持CMS143)" Margin="5" Checked="checkSpecialMode_Checked" Unchecked="checkSpecialMode_Unchecked" >
+                        <CheckBox.ToolTip>
+                            <StackPanel>
+                                <Label Content="勾选后启动时将使用登录代理注入账号密码，支持 CMS143 等需要特殊登录包的版本">
+                                </Label>
+                            </StackPanel>
+                        </CheckBox.ToolTip>
+                    </CheckBox>
                 </StackPanel>
 
 
             </StackPanel>
-            <StackPanel Style="{StaticResource RowStyle}" HorizontalAlignment="Center">
+            <StackPanel x:Name="SpecialLoginPanel" Style="{StaticResource RowStyle}" HorizontalAlignment="Center" Visibility="Collapsed">
                 <StackPanel Margin="20,0,20,0">
                     <StackPanel Style="{StaticResource RowStyle}">
                         <Label Style="{StaticResource SubLabelStyle2}" Content="输入账号"/>
